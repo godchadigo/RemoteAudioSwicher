@@ -12,6 +12,13 @@
 - 然後利用JsonRPC的方式通訊，c#端為Server，python端為Client。
 - python端實現WebAPI以及簡易的Flask Web，在板模中利用Jquery js來做Web api callback，python收到callback後再去呼叫jsonRpc下指令給c# Server端。
 
+## Python安裝套件
+```shell
+pip install json-rpc
+pip install Flask
+pip install Flask-Cors
+```
+
 ## 使用方法
 1. 下載Release檔案，[點我跳轉](https://github.com/godchadigo/RemoteAudioSwicher/releases/tag/new)
 2. 解壓縮檔案後，雙擊start.bat
@@ -31,3 +38,5 @@
 ## 借助工具
 [AudioSwitcher](https://github.com/xenolightning/AudioSwitcher)
 [Touchsocket](https://github.com/RRQM/TouchSocket)
+[json-rpc1.15.0](https://pypi.org/project/json-rpc/)
+[Flask](https://pypi.org/project/json-rpc/)
