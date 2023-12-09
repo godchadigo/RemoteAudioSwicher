@@ -2,6 +2,11 @@
 ## 製作動機
 - 因為平常有躺在床上聽音樂的習慣，但是又懶得從床上爬起來去調整喇吧音量，又或者是有時候想睡覺，電腦音量忘記關訊息提示，此時我就想手機都在身上，能否用手機來控制電腦音效卡輸出以及音量，然後此專案就誕生了...
 
+## 原理
+- 利用Windows api去獲取本機的音效卡，以及控制本機的音量。
+- 然後利用JsonRPC的方式通訊，c#端為Server，python端為Client。
+- python端實現WebAPI以及簡易的Flask Web，在板模中利用Jquery js來做Web api callback，python收到callback後再去呼叫jsonRpc下指令給c# Server端。
+
 ## 使用方法
 1. 下載Release檔案
 2. 解壓縮檔案後，雙擊start.bat
