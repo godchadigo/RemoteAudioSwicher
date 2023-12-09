@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComboBox Example</title>
+
+    <style>
+        input[type="range"] {
+            -webkit-appearance: none; /* 移除默認外觀 */
+            appearance: none;
+            height: 30px; /* 設置滑塊高度 */
+            width: 80%; /* 設置滑塊寬度 */
+            margin: 10px 0; /* 設置邊距 */
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 8px; /* 設置進度條高度 */
+            background-color: #ecf0f1; /* 進度條顏色 */
+            border-radius: 5px; /* 圓角 */
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; /* 移除默認外觀 */
+            appearance: none;
+            width: 40px; /* 設置拉柄寬度 */
+            height: 40px; /* 設置拉柄高度 */
+            background-color: #3498db; /* 拉柄顏色 */
+            cursor: pointer; /* 指示光標類型 */
+            border-radius: 50%; /* 圓角 */
+            border: 2px solid #2980b9; /* 拉柄邊框 */
+            margin-top: -15px; /* 上方邊距，使拉柄和進度條對齊 */
+        }
+
+        span {
+            display: inline-block;
+            margin-top: 10px;
+        }
+    </style>
+    
+    <!-- 引入 jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+    <label for="deviceSelect">主機的IP:{{ ip }}:{{ port }}</label>    
+
+    <div>
+        <label for="volumeSlider">Adjust Volume:</label>
+        <input type="range" id="volumeSlider" min="0" max="100" step="0.1" value="50">
+        <span id="volumeValue">50</span>
+    </div>
+
+    <label for="deviceSelect">Choose a device:</label>
+    <select id="deviceSelect" name="device">
+        {% for device in data %}
+            <option value="{{ device['Uuid'] }}">{{ device['Name'] }}</option>
+        {% endfor %}
+    </select>
+    <button id="submitButton">設置為預設輸出</button>
+
+    <!-- JavaScript 代碼 -->
+    <script>
+        $(document).ready(function() {
+            IP = "{{ ip }}"
+            PORT = "{{ port }}"
+            uri = `http://${IP}:${PORT}`
+            // 獲取選中的設備 NAME
+            var selectedDeviceName = $("#deviceSelect option:selected").text();
+            // 獲取選中的設備 UUID
+            var selectedDeviceUuid = $("#deviceSelect").val();
+            
+            //控制音量滑塊
+            // Get the volume slider and value elements
+            var volumeSlider = $("#volumeSlider");
+            var volumeValue = $("#volumeValue");
+
+            // Update the volume value when the slider is moved
+            volumeSlider.on("input", function() {
+                var value = volumeSlider.val();
+                volumeValue.text(value);
+
+                //呼叫api控制音量
+                setDeviceVol(selectedDeviceUuid, value, function(response) {
+
+                });
+            });
+            
+            //獲取預設設備
+            getDefaultDevice(function(response) {
+                //獲取設備音量
+                data = JSON.parse(response["result"] )    
+                /*
+                console.log(data)            
+                console.log("預設音量" + data["Vol"] + "   Uuid:" + data["Uuid"]);
+                */
+                volumeValue.text(data["Vol"]);
+                volumeSlider.val(data["Vol"]);
+
+                //把獲取到的預設數據設定到全局變數
+                selectedDeviceName = data["Name"]
+                selectedDeviceUuid = data["Uuid"]
+                $("#deviceSelect").val(data["Uuid"]);
+                                
+                //alert(response["result"]);
+            });
+           
+            //當下拉選單Index改變時
+            $("#deviceSelect").change(function() {
+                // 獲取選中的設備 NAME
+                selectedDeviceName = $("#deviceSelect option:selected").text();
+                // 獲取選中的設備 UUID
+                selectedDeviceUuid = $("#deviceSelect").val();
+
+                getDeviceVol(selectedDeviceUuid, function(response) {
+                    //獲取設備音量
+                    currentVol = response["result"]                
+                    volumeValue.text(currentVol);
+                    volumeSlider.val(currentVol);
+                    //alert(response["result"]);
+                });
+                // 在這裡處理索引更改事件
+                //alert("Index changed! Selected device: " + selectedDeviceName + " (" + selectedDeviceUuid + ")");
+            });
+
+
+            // 當按鈕被點擊時
+            $("#submitButton").click(function() {
+                                              
+                // 發送 AJAX 請求到伺服器
+                //alert("post")
+                $.ajax({
+                    type: "POST",
+                    url: uri + "/setDevice",
+                    contentType: "application/json", 
+                    data: JSON.stringify({ 
+                        deviceName: selectedDeviceName,
+                        deviceUuid: selectedDeviceUuid
+                    }),
+                    success: function(response) {
+                        // 在結果區域顯示伺服器返回的內容
+                        //$("#result").html(response);
+                        if (response.success){
+                            alert(response["success"])
+                        }else{
+                            alert("error")
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                    // 在發生錯誤時執行的代碼
+                    console.log("AJAX request failed: " + status + "\nError: " + error);
+                    }
+                });
+                
+            });
+            
+            //獲取設備音量
+            function getDeviceVol(deviceUuid, successCallback) {
+                $.ajax({
+                    type: "GET",
+                    url: uri + "/getComputerDeviceVol",
+                    data: { deviceUuid: deviceUuid },
+                    success: function(response) {
+                        // 在成功時執行的代碼
+                        if (successCallback) {
+                            // 呼叫回呼函數並傳遞伺服器的回應
+                            successCallback(response);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // 在發生錯誤時執行的代碼
+                        console.log("AJAX request failed: " + status + "\nError: " + error);
+                    }
+                });
+            }
+
+            //設置設備音量
+            function setDeviceVol(deviceUuid , vol, successCallback) {
+                $.ajax({
+                    type: "POST",
+                    url: uri + "/setComputerDeviceVol",
+                    contentType: "application/json", 
+                    data: JSON.stringify({                         
+                        deviceUuid: selectedDeviceUuid,
+                        deviceVol: vol
+                    }),
+                    success: function(response) {
+                        // 在成功時執行的代碼
+                        if (successCallback) {
+                            // 呼叫回呼函數並傳遞伺服器的回應
+                            successCallback(response);
+                            console.log(selectedDeviceUuid)
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // 在發生錯誤時執行的代碼
+                        console.log("AJAX request failed: " + status + "\nError: " + error);
+                    }
+                });
+            }
+
+            //獲取預設設備
+            function getDefaultDevice(successCallback) {
+                $.ajax({
+                    type: "GET",
+                    url: uri + "/getComputerDefaultDevice",                    
+                    success: function(response) {
+                        // 在成功時執行的代碼
+                        if (successCallback) {
+                            // 呼叫回呼函數並傳遞伺服器的回應
+                            successCallback(response);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // 在發生錯誤時執行的代碼
+                        console.log("AJAX request failed: " + status + "\nError: " + error);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
