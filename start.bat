@@ -1,11 +1,11 @@
 @echo off
 
-set "programName=NAudio.exe"
+set "programName=RemoteAudioSwicher.exe"
 
 tasklist | find /i "%programName%" > nul
 if errorlevel 1 (
     echo %programName% running..
-	start NAudio.exe
+	start RemoteAudioSwicher.exe
 ) else (
     echo %programName% is running.. 
 )
