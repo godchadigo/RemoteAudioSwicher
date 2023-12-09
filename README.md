@@ -12,7 +12,8 @@
 - 然後利用JsonRPC的方式通訊，c#端為Server，python端為Client。
 - python端實現WebAPI以及簡易的Flask Web，在板模中利用Jquery js來做Web api callback，python收到callback後再去呼叫jsonRpc下指令給c# Server端。
 
-## Python安裝套件
+## Python所需套件
+- 首先你的電腦要有Python3，然後打開你電腦的cmd，把下面的指令貼上，即可自動安裝。
 ```shell
 pip install json-rpc
 pip install Flask
