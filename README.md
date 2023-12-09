@@ -13,7 +13,7 @@
 - python端實現WebAPI以及簡易的Flask Web，在板模中利用Jquery js來做Web api callback，python收到callback後再去呼叫jsonRpc下指令給c# Server端。
 
 ## 使用方法
-1. 下載Release檔案
+1. 下載Release檔案，[點我跳轉](https://github.com/godchadigo/RemoteAudioSwicher/releases/tag/new)
 2. 解壓縮檔案後，雙擊start.bat
 ![image](https://github.com/godchadigo/RemoteAudioSwicher/assets/19208239/db797746-af22-4d5d-9a24-94c9fdba2426)
 4. 訪問http://yourIP:5000/device  (yourIP再啟動start.bat時會顯示)
