@@ -15,3 +15,7 @@
 ![image](https://github.com/godchadigo/RemoteAudioSwicher/assets/19208239/f8e4b9ae-c9cd-4b38-bd5a-5f47c99f4f41)
 ![image](https://github.com/godchadigo/RemoteAudioSwicher/assets/19208239/c3ea8227-2c7f-435c-89ac-7778ad7d9cca)
 
+## 借助工具
+[AudioSwitcher](https://github.com/xenolightning/AudioSwitcher)
+[Touchsocket](https://github.com/RRQM/TouchSocket)
+
